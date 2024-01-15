@@ -1,0 +1,6 @@
+requests
+fastapi
+pydantic
+pydantic-settings
+mysql-connector-python
+# motor
