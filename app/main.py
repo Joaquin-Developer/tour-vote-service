@@ -3,6 +3,7 @@ from starlette.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
 from app.routes.songs import router as songs_router
+from app.routes.tour_event_songs_list import router as TESL_router
 
 
 app = FastAPI(title=settings.APP_NAME)
@@ -19,3 +20,4 @@ if settings.BACKEND_CORS_ORIGINS:
 
 
 app.include_router(songs_router, prefix=settings.API_V1_STR + "/all_songs")
+app.include_router(TESL_router, prefix=settings.API_V1_STR + "/event_songs_list")
