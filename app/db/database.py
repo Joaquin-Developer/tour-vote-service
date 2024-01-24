@@ -10,5 +10,5 @@ engine = create_engine(
 )
 
 
-def get_session():
+def get_session() -> Session:
     return Session(engine)

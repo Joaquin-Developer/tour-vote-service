@@ -12,10 +12,10 @@ router = APIRouter()
 @router.post("/vote")
 def vote(mail: str, ticket_id: str, tour_id: str, songs_voted: List[int] = Query(None)):
     """
-    Vote for songs in a event
+    Vote for songs in an event
     """
 
-    # Verify if user has alredy voted for event.
+    # Verify if user has already voted for event.
     with get_session() as session:
         existing_vote = session.query(Vote).filter_by(
             mail=mail, ticket_id=ticket_id, tour_id=tour_id
@@ -26,14 +26,18 @@ def vote(mail: str, ticket_id: str, tour_id: str, songs_voted: List[int] = Query
             logging.warning(message)
             raise HTTPException(status_code=400, detail=message)
 
-    # Insert votes
-
-    # Verify if selected songs are relationed in TOUR_EVENT_SONGS_LIST
-    with get_session() as session:
+        # Insert votes
+        # Verify if selected songs are relation in TOUR_EVENT_SONGS_LIST
         valid_songs = session.query(TourEventSongsList).filter(
             TourEventSongsList.tour_id.in_(tour_id),
             TourEventSongsList.song_id.in_(songs_voted)
         ).all()
 
-        for _vote in valid_songs:
-            pass
+        valid_song_ids = [song.song_id for song in valid_songs if song.song_id in songs_voted]
+
+        for song_id in valid_song_ids:
+            session.add(
+                Vote(tour_id=tour_id, son_id=song_id, mail=mail, ticket_id=ticket_id)
+            )
+        session.commit()
+        return {"message": "OK. Votes were recorded"}
