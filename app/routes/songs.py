@@ -13,10 +13,10 @@ def get_all_songs():
     Get all songs
     """
     with get_session() as session:
-        results = session.query(Song)
+        results = session.query(Song).all()
 
     return [
-        dict(zip(row._mapping.keys(), row))
+        dict(row.__dict__)
         for row in results
     ]
 
